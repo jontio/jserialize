@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
     testclass tc;
     tc.stringProperty="yup";
-//    tc.val=34234;
+//    tc.val=34234; //default is 42
     tc.val2=112;
     tc.num="numnumnum";
     QByteArray ba=tc;

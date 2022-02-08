@@ -15,7 +15,7 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
         const QVariant::Type type = metaObj->property(i).type();
         if(type>=QVariant::UserType)
         {
-            qDebug()<<"dont know how to deal with this. please help";
+            qFatal("dont know how to deal with this. please help");
             continue;
         }
         QVariant value;
@@ -47,7 +47,7 @@ bool JSerialize::toQByteArray(QByteArray &ba) const
         const QVariant::Type type = metaObj->property(i).type();
         if(type>=QVariant::UserType)
         {
-            qDebug()<<"dont know how to deal with this. please help";
+            qFatal("dont know how to deal with this. please help");
             continue;
         }
         const QVariant value = this->property(propertyName);
