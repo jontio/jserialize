@@ -33,6 +33,7 @@ Then code to serialize...
     //that looks like tc on the
     //remote computer. ba is just a
     //a container for bytes.
+    qDebug()<<"serialization size is"<<ba.size()<<"bytes\n";
 
     testclass tc2;
     tc2<<ba;
@@ -45,6 +46,8 @@ Then code to serialize...
 output...
 
 ```bash
+serialization size is 33 bytes
+
 "yup"
 42
 112
