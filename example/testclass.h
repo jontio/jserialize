@@ -8,8 +8,7 @@ class testclass : public JSerialize
 {
     Q_OBJECT
 public:
-//    J_SERIALIZE(double,dub)
-    double dub;
+    J_SERIALIZE(double,dub)
     J_SERIALIZE(int,val2)
     J_SERIALIZE(QString,num,"test")
     J_SERIALIZE(QString,stringProperty)
