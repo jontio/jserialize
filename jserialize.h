@@ -52,7 +52,9 @@
  */
 
 //these defined effect serialization output size
-#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
+//J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT has issues
+//don't use it yet
+//#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
 #define J_SERIALIZE_DROP_CLASSNAME
 
 #include <QObject>
