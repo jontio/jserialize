@@ -4,11 +4,13 @@
 bool JSerialize::fromQByteArray(const QByteArray &ba)
 {
     const QMetaObject* metaObj = this->metaObject();
-    QString rxclassName;
     QDataStream ds(ba);
+#ifndef J_SERIALIZE_DROP_CLASSNAME
+    QString rxclassName;
     ds>>rxclassName;
     QString className = metaObj->className();
     if(rxclassName!=className)return false;
+#endif
     for (int i = 1; i < metaObj->propertyCount(); ++i)
     {
         const char* propertyName = metaObj->property(i).name();
@@ -19,7 +21,13 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
             continue;
         }
         QVariant value;
+#ifdef J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
+        QByteArray ba_tmp;
+        ds>>ba_tmp;
+        value=ba_tmp;
+#else
         ds>>value;
+#endif
         if(!value.isValid())
         {
             qDebug()<<"fail fromQByteArray: QVariant not valid";
@@ -38,9 +46,11 @@ bool JSerialize::toQByteArray(QByteArray &ba) const
 {
     ba.clear();
     const QMetaObject* metaObj = this->metaObject();
-    QString className = metaObj->className();
     QDataStream ds(&ba,QIODevice::WriteOnly);
+#ifndef J_SERIALIZE_DROP_CLASSNAME
+    QString className = metaObj->className();
     ds<<className;
+#endif
     for (int i = 1; i < metaObj->propertyCount(); ++i)
     {
         const char* propertyName = metaObj->property(i).name();
@@ -56,7 +66,11 @@ bool JSerialize::toQByteArray(QByteArray &ba) const
             qDebug()<<"fail toQByteArray: QVariant not valid";
             return false;
         }
+#ifdef J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
+        ds<<value.toByteArray();
+#else
         ds<<value;
+#endif
     }
     return true;
 }

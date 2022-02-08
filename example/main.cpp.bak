@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     testclass tc;
     tc.stringProperty="yup";
     //tc.val is 42 by default if you look in testclass.h
-    tc.val2=112;
+    tc.val2=1122;
     tc.num="numnumnum";
     tc.dub=3.14;
 
