@@ -1,6 +1,6 @@
-# JSerialize: Simple serialization
+# JSerialize: Simple serialization for Qt
 
-Simple serialization of simple type in classes. Useful for saving things to disk and transmitting stuff from one place to another.
+Simple serialization of simple type in classes for Qt. Useful for saving things to disk and transmitting stuff from one place to another.
 
 # Example
 
