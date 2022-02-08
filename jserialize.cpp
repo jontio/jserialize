@@ -25,6 +25,7 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
         QByteArray ba_tmp;
         ds>>ba_tmp;
         value=ba_tmp;
+		value=value.convert(type);
 #else
         ds>>value;
 #endif
