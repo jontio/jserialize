@@ -56,7 +56,10 @@
 //cation as it might have issues with some types
 //I'll leave it as the default so ppl can
 //let me know what ones fail
-#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
+//NOPE J_SERIALIZE_USE_QBYTEARRAY_AS_FORMA
+// really has issues. don't use
+//J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT yet. Wait
+//#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
 #define J_SERIALIZE_DROP_CLASSNAME
 
 //not all types can be converted to QByteArray.
