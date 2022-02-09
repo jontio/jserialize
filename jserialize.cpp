@@ -17,15 +17,23 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
         const QVariant::Type type = metaObj->property(i).type();
         if(type>=QVariant::UserType)
         {
-            qFatal("dont know how to deal with this. please help");
-            continue;
+            qDebug()<<"dont know how to deal with this. please help";
+            return false;
         }
         QVariant value;
 #ifdef J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
-        QByteArray ba_tmp;
-        ds>>ba_tmp;
-        value=ba_tmp;
-		value=value.convert(type);
+        //exceptions to the QByteArray format
+        if(J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT_EXCEPTIONS)
+        {
+            ds>>value;
+        }
+        else
+        {
+            QByteArray ba_tmp;
+            ds>>ba_tmp;
+            value=ba_tmp;
+            value.convert(type);
+        }
 #else
         ds>>value;
 #endif
@@ -36,7 +44,7 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
         }
         if(!this->setProperty(propertyName,value))
         {
-            qDebug()<<"fail fromQByteArray: failed to set property";
+            qDebug()<<"fail fromQByteArray: failed to set property"<<propertyName<<value;
             return false;
         }
     }
@@ -58,8 +66,8 @@ bool JSerialize::toQByteArray(QByteArray &ba) const
         const QVariant::Type type = metaObj->property(i).type();
         if(type>=QVariant::UserType)
         {
-            qFatal("dont know how to deal with this. please help");
-            continue;
+            qDebug()<<"dont know how to deal with this. please help";
+            return false;
         }
         const QVariant value = this->property(propertyName);
         if(!value.isValid())
@@ -68,7 +76,15 @@ bool JSerialize::toQByteArray(QByteArray &ba) const
             return false;
         }
 #ifdef J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
-        ds<<value.toByteArray();
+        //exceptions to the QByteArray format
+        if(J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT_EXCEPTIONS)
+        {
+            ds<<value;
+        }
+        else
+        {
+            ds<<value.toByteArray();
+        }
 #else
         ds<<value;
 #endif

@@ -52,10 +52,28 @@
  */
 
 //these defined effect serialization output size
-//J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT has issues
-//don't use it yet
-//#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
+//use J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT with
+//cation as it might have issues with some types
+//I'll leave it as the default so ppl can
+//let me know what ones fail
+#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
 #define J_SERIALIZE_DROP_CLASSNAME
+
+//not all types can be converted to QByteArray.
+//not sure what ones can but add any that don't
+//to this list if you are using the
+//J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT define.
+//somethings like bool are shorter as a QVariant
+//than a QByteArray so might as well add anything
+//than makes the size shorter too as that's
+//the only reasion for using the
+//J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT define
+#define J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT_EXCEPTIONS (\
+    (type==QVariant::StringList)    ||\
+    (type==QVariant::Map)           ||\
+    (type==QVariant::Hash)          ||\
+    (type==QVariant::Bool)\
+    )\
 
 #include <QObject>
 #include <QDataStream>
@@ -66,12 +84,12 @@
 #define J_SERIALIZE(...) GET_SERIALIZE_MACRO(__VA_ARGS__, J_SERIALIZE_3, J_SERIALIZE_2)(__VA_ARGS__)
 
 #define J_SERIALIZE_3(type, val, init_val)\
-            Q_PROPERTY(type val MEMBER val)\
-            type val=init_val;\
+    Q_PROPERTY(type val MEMBER val)\
+    type val=init_val;\
 
 #define J_SERIALIZE_2(type, val)\
-            Q_PROPERTY(type val MEMBER val)\
-            type val;\
+    Q_PROPERTY(type val MEMBER val)\
+    type val;\
 
 class JSerialize : public QObject
 {
