@@ -4,7 +4,6 @@
 bool JSerialize::fromQByteArray(const QByteArray &ba)
 {
     m_error=false;
-    qDebug().setVerbosity(QDebug::MinimumVerbosity);
     const QMetaObject* metaObj = this->metaObject();
     QDataStream ds(ba);
 #ifndef J_SERIALIZE_DROP_CLASSNAME
