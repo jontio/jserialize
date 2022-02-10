@@ -3,13 +3,20 @@
 
 bool JSerialize::fromQByteArray(const QByteArray &ba)
 {
+    m_error=false;
+    qDebug().setVerbosity(QDebug::MinimumVerbosity);
     const QMetaObject* metaObj = this->metaObject();
     QDataStream ds(ba);
 #ifndef J_SERIALIZE_DROP_CLASSNAME
     QString rxclassName;
     ds>>rxclassName;
     QString className = metaObj->className();
-    if(rxclassName!=className)return false;
+    if(rxclassName!=className)
+    {
+        qDebug()<<"rx classname doesn't match expected";
+        m_error=true;
+        return false;
+    }
 #endif
     for (int i = 1; i < metaObj->propertyCount(); ++i)
     {
@@ -17,7 +24,9 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
         const QVariant::Type type = metaObj->property(i).type();
         if(type>=QVariant::UserType)
         {
-            qDebug()<<"dont know how to deal with this. please help";
+            qDebug()<<"fromQByteArray: user type"<<type<<(int)type<<". dont know how to deal with this. please help";
+            qFatal("dont know how to deal with use type. please help");
+            m_error=true;
             return false;
         }
         QVariant value;
@@ -32,7 +41,26 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
             QByteArray ba_tmp;
             ds>>ba_tmp;
             value=ba_tmp;
-            value.convert(type);
+            //for some reasion some easy types fail on value.convert(type)
+            //not sure why. i think it muxt be a qt issue. so far ones that
+            //fail are in type QMetaType::Type but not QVariant::Type
+            switch((QMetaType::Type)type)
+            {
+            case QMetaType::UChar:
+                value=(uchar)ba_tmp[0];
+                break;
+            case QMetaType::Char:
+                value=(char)ba_tmp[0];
+                break;
+            default:
+                if(!value.convert(type))
+                {
+                    qDebug()<<"can't convert from byte array to"<<type<<". please help";
+                    m_error=true;
+                    return false;
+                }
+                break;
+            }
         }
 #else
         ds>>value;
@@ -40,11 +68,13 @@ bool JSerialize::fromQByteArray(const QByteArray &ba)
         if(!value.isValid())
         {
             qDebug()<<"fail fromQByteArray: QVariant not valid";
+            m_error=true;
             return false;
         }
         if(!this->setProperty(propertyName,value))
         {
             qDebug()<<"fail fromQByteArray: failed to set property"<<propertyName<<value;
+            m_error=true;
             return false;
         }
     }
@@ -66,13 +96,15 @@ bool JSerialize::toQByteArray(QByteArray &ba) const
         const QVariant::Type type = metaObj->property(i).type();
         if(type>=QVariant::UserType)
         {
-            qDebug()<<"dont know how to deal with this. please help";
+            qDebug()<<"toQByteArray: user type"<<type<<(int)type<<". dont know how to deal with this. please help";
+            qFatal("dont know how to deal with use type. please help");
             return false;
         }
         const QVariant value = this->property(propertyName);
         if(!value.isValid())
         {
             qDebug()<<"fail toQByteArray: QVariant not valid";
+            qFatal("fail toQByteArray: QVariant not valid");
             return false;
         }
 #ifdef J_SERIALIZE_USE_QBYTEARRAY_AS_FORMAT
