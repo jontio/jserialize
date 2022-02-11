@@ -19,7 +19,6 @@
  * {
  *     Q_OBJECT
  * public:
- *     J_DECLARE_SERIALIZE
  *     J_SERIALIZE(int,val2)
  *     J_SERIALIZE(QString,num,"test")
  *     J_SERIALIZE(QString,stringProperty)
