@@ -199,6 +199,17 @@ public:
         s.m_error=!(s.toQByteArray(val));
         return s;
     }
+	
+	//equality operator == and not equal !=
+	bool operator==(const JSerialize& other)
+    {
+        QByteArray ba,other_ba;
+        toQByteArray(ba);
+        other.toQByteArray(other_ba);
+        if(ba==other_ba)return true;
+        return false;
+    }
+    inline bool operator!=(const JSerialize& other){ return !((*this) == other); }
 
 private:
     QByteArray ba;
